@@ -1,12 +1,21 @@
 version: 0.2
 
 phases:
+  pre_build:
+    commands:
+    - aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 840814869112.dkr.ecr.us-west-2.amazonaws.com
   install:
     commands:
       - npm install
   build:
     commands:
       - npm test
+      - docker build -t eshdutta-repo .
+      - docker tag eshdutta-repo:latest 840814869112.dkr.ecr.us-west-2.amazonaws.com/eshdutta-repo:latest
+  post_build:
+    commands:
+    - docker push 840814869112.dkr.ecr.us-west-2.amazonaws.com/eshdutta-repo:latest
+
 artifacts:
   files:
     - '**/*'
